@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Timer Thing</title>
+
+<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
+<link href="css/style.css" type="text/css" rel="stylesheet">
+
+<script src="lib/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="js/timer.js" type="text/javascript"></script>
+
+</head>
+
+
+<body>
+
+<form id="noSubmitForm" name="noSubmitForm" action="#" method="POST" class="no-display"></form>
+
+<div id="wrapper" class="clearfix">
+
+<h1><span class="stopwatch"></span>The Timer Thing <button form="noSubmitForm" id="helpToggle">?</button></h1>
+
+<div id="leftBox">
+  <div id="blurb" class="no-display">
+    <p>This is a simple time-tracking app. Define a task, start the timer, and get to work. When you are done, stop the timer. Manual controls can be used to add or remove blocks of time (in case you leave it running or forget to start it).</p>
+    <p>Use <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> (YYYY-MM-DD) fore dates. Use twenty-four hour notation for times.</p>
+    <p>Data is stored in your browser's local storage. The backup feature gives you a copy of your saved data as a JSON string, so you can store it somewhere less volatile.</p>
+    <p>Timer Thing uses icons from the <a href="http://www.entypo.com/">Entypo</a> set compiled using <a href="http://icomoon.io/">IcoMoon</a>. Timer thing uses the font Roboto via <a href="https://www.google.com/fonts">Google Fonts</a>.</p>
+  </div>
+  <div class="rounded light">
+    <h3 class="tab">Tasks</h3>
+    <div class="rounded-content">
+        <select id="taskList" form="noSubmitForm">
+        </select>
+        <button form="noSubmitForm" id="addTask" class="add"></button>
+        <form id="addTaskForm" name="addTaskForm" action="#" method="POST" class="no-display">
+          <input id="newTaskName" name="newTask" type="text" placeholder="Task Name" maxlength="64" size="20"> <button type="submit" id="newTaskConfirm" class="check"></button> <button type="reset" id="newTaskCancel" class="x"></button>
+        </form>
+    </div>
+  </div>
+  <div class="rounded light">
+    <h3 class="tab">Report</h3>
+    <div id="leftBoxTop" class="rounded-content">
+      <!--
+      <div id="taskControls">
+        <div id="editTask" class="edit"></div>
+        <div id="deleteTask" class="delete"></div>
+      </div>
+    -->
+  
+      <div id="taskDetails">
+        <div>
+          <span id="taskName"></span>
+          <button form="noSubmitForm" id="editTask" class="edit"></button> <button form="noSubmitForm" id="deleteTask" class="delete"></button>
+        </div>
+
+        
+        <form id="editTaskForm" name="editTaskForm" class="no-display" action="#" method="POST">
+          <input name="taskName" type="text" placeholder="Task Name" maxlength="64" size="20">
+          <button type="submit" class="check"></button>
+          <button type="reset" class="x"></button>
+        </form>
+        
+        <table style="width: 100%;">
+          <tr>
+            <td style="width: 50%; text-align: center;">
+          <input type="text" id="reportFrom" name="reportFrom" placeholder="From" maxlength="10" size="8">&ndash;<input type="text" id="reportTo" name="reportTo" placeholder="To" maxlength="10" size="8">
+          <div id="reportTotal">--:--</div>
+            </td>
+            <td style="width:50%; text-align: left;">
+        <div id="reportControls">
+          <button form="noSubmitForm" type="button" id="reportAll">All</button><br>
+          <button form="noSubmitForm" type="button" id="reportCurrentMonth">Current Month</button><br>
+          <button form="noSubmitForm" type="button" id="reportLastMonth">Last Month</button><br>
+        </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="rounded light">
+    <h3 class="tab">Timer</h3>
+    <div class="rounded-content">
+      <div id="activeTaskName"></div>
+      <span id="activeBlockTime">0:00</span>
+      <button form="noSubmitForm" id="startStop">Start</button>
+    </div>
+  </div>
+  
+  <div class="rounded light clearfix">
+    <h3 class="tab">Log</h3>
+    <div class="rounded-content">
+      <button form="noSubmitForm" id="pinDaysFilterFrom" class="first"></button>
+      <input type="text" id="dayDisplayFrom" name="dayDisplayFrom" placeholder="From" maxlength="10" size="8">&ndash;<input type="text" id="dayDisplayTo" name="dayDisplayTo" placeholder="To" maxlength="10" size="8">
+      <button form="noSubmitForm" id="pinDaysFilterTo" class="last"></button>
+    </div>
+    <div id="logWrapper" class="clearfix">
+      <div id="days">
+        <div id="daysHolder">
+          <table id="dayList" class="days clicky light">
+            <tbody>
+              <button form="noSubmitForm" id="deleteDay" class="delete no-display"></button>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="blocks">
+        <div id="blocksBackground"></div>
+        <div id="blocksContent">
+          <div id="editDeleteBlock" class="no-display">
+            <button form="noSubmitForm" id="editBlock" class="edit"></button>
+            <button form="noSubmitForm" id="deleteBlock" class="delete"></button>
+          </div>
+              
+          <table id="blockList" class="blocks clicky dark">
+            <tr id="editBlockForm" class="no-display">
+              <td colspan="3">
+                <form name="editBlockForm" method="POST" target="#">
+                  <input type="text" id="editBlockStart" name="editBlockStart" placeholder="Start" maxlength="5" size="3">&ndash;<input type="text" id="editBlockStop" name="editBlockEnd" placeholder="Stop" maxlength="5" size="3">
+                  <button type="submit" id="editBlockConfirm" class="check"></button>
+                  <button type="reset" id="editBlockCancel" class="x"></button>
+                </form>
+              </td>
+            </tr>
+            <tbody>
+              
+              
+            </tbody>
+          </table>
+          <button form="noSubmitForm" id="addBlock" class="add"></button>
+          <br>
+          <form id="addBlockForm" name="addBlockForm" method="POST" target="#" class="no-display">
+            <input type="text" id="addBlockDate" name="addBlockDate" placeholder="Date" maxlength="10" size="8"><br>
+            <input type="text" id="addBlockStart" name="addBlockStart" placeholder="Start" maxlength="5" size="3">&ndash;<input type="text" id="addBlockStop" name="addBlockStop" placeholder="Stop" maxlength="5" size="3">
+            <button type="submit" id="addBlockConfirm" class="check"></button>
+            <button type="reset" id="addBlockCancel" class="x"></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="rounded light">
+    <h3 class="tab">Backup</h3>
+    <div class="rounded-content">
+      <form id="backupForm" action="#" method="POST">
+        <textarea rows="5" cols="40"></textarea><br>
+        <button name="backup" type="button">Backup</button> <button name="restore" type="button">Restore</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+</div> <!-- wrapper-->
+
+
+
+
+
+
+
+
+
+</body>
+
+</html>
